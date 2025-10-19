@@ -1,0 +1,36 @@
+/* --- Neumorphism Variables & Base Setup --- */
+:root {
+    --neumorphic-light: #f8f8f8;
+    --neumorphic-dark: #d0d0d0;
+    --outer-shadow: 8px 8px 16px var(--neumorphic-dark), -8px -8px 16px var(--neumorphic-light);
+}
+
+/* --- Global Styles --- */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #e0e0e0; 
+    transition: background-color 0.3s ease;
+}
+
+/* --- Container and Card Styling --- */
+.main-card {
+    background-color: #e0e0e0;
+    border-radius: 1.5rem;
+    box-shadow: var(--outer-shadow);
+}
+
+/* --- Button Styling (Neumorphic Interaction) --- */
+.cta-button {
+    transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+    border: none;
+    cursor: pointer;
+    box-shadow: var(--outer-shadow);
+    background-color: #e0e0e0;
+    /* Ensure text colors are set in the HTML/Tailwind for contrast */
+}
+
+/* Pressed effect on hover/active */
+.cta-button:hover, .cta-button:active {
+    box-shadow: inset 4px 4px 8px var(--neumorphic-dark), inset -4px -4px 8px var(--neumorphic-light); 
+    transform: scale(0.98);
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Recommender Home</title>
+    <!-- 1. Load Tailwind CSS for utility classes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 2. Load Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- 3. Load Neumorphic CSS (Assuming you have a home.css or using detector.css variables) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='detector.css') }}">
+    <style>
+        /* Ensuring body styling uses Inter if it's not set in detector.css */
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen flex justify-center items-center p-4">
+    
+    <!-- Use the main-card class to get the Neumorphic outer shadow -->
+    <div class="main-card max-w-lg w-full p-8 md:p-12 text-center">
+        
+        <h1 class="text-4xl font-extrabold text-indigo-700 mb-6">Welcome to the Emotion Content Selector</h1>
+        
+        <p class="text-xl text-gray-700 mb-8">
+            Analyze your current emotion and receive personalized recommendations for music, videos, mudras, or quotes.
+        </p>
+
+        <div class="flex flex-col space-y-4">
+            
+            <!-- Option 1: Start Detection (Primary Action) -->
+            <a href="{{ url_for('detector') }}" 
+               class="cta-button text-white bg-indigo-500 hover:bg-indigo-600 font-bold py-4 px-6 rounded-xl text-lg shadow-lg hover:shadow-inner">
+                ▶️ Start New Emotion Detection
+            </a>
+            
+            <!-- Option 2: View Last Recommendations (Fixes the BuildError if present on the original home.html) -->
+            <!-- If the user was trying to link to recommendations, they should link to the menu now, 
+                 which requires no arguments for the Flask app.py -->
+            <a href="{{ url_for('menu') }}" 
+               class="cta-button text-gray-700 font-bold py-3 px-6 rounded-xl text-md">
+                View Content Menu (Based on Last Emotion)
+            </a>
+        </div>
+        
+        <p class="text-sm text-gray-500 mt-8">
+            Requires webcam access for real-time analysis.
+        </p>
+    </div>
+
+</body>
+</html>

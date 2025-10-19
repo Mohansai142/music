@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Song Recommendations</title>
+    <!-- 1. Load Tailwind CSS for utility classes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 2. Load Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- 3. Load Neumorphic CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='recommendations.css') }}">
+</head>
+<!-- Use the same body setup to push content to the top, centered horizontally -->
+<body class="min-h-screen flex justify-center items-start p-4 pt-10">
+    
+    <!-- Use the main-card class to get the Neumorphic outer shadow -->
+    <div class="main-card max-w-4xl w-full p-6 md:p-8">
+        
+        <!-- HEADER: Project name removed, focus is on the page title and navigation -->
+        <header class="mb-6 border-b pb-3">
+            
+            <div class="flex justify-between items-center">
+                <!-- Page title is now more prominent -->
+                <h2 class="text-2xl font-bold text-gray-800">Your Personalized Song Recommendations</h2>
+                <nav class="space-x-3">
+                    <!-- Navigation links use cta-button for the border and neumorphic effect -->
+                    <a href="{{ url_for('home') }}" 
+                       class="cta-button text-gray-700 font-semibold px-3 py-1 rounded-lg text-sm inline-block">Home</a>
+                    <a href="{{ url_for('detector') }}" 
+                       class="cta-button text-gray-700 font-semibold px-3 py-1 rounded-lg text-sm inline-block">Start New Detection</a>
+                </nav>
+            </div>
+        </header>
+
+        <!-- EMOTION MENTIONED -->
+        {% if emotion %}
+        <div class="mb-6 p-4 rounded-lg bg-red-100 shadow-md text-center text-red-700 font-semibold text-lg">
+            Detected Emotion: <span class="uppercase tracking-wider font-extrabold">{{ emotion }}</span>
+        </div>
+        {% endif %}
+        
+        <!-- Recommendations Table -->
+        <div id="music-table-container">
+            <table id="music-table">
+                <thead>
+                    <tr>
+                        {% for heading in headings %}
+                        <th>{{ heading }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if data is not none and not data.empty %}
+                        {% for row in data.itertuples() %}
+                        <tr>
+                            <td>
+                                <a href="{{ row.URL }}" target="_blank" rel="noopener noreferrer">
+                                    {{ row.Name }}
+                                </a>
+                            </td>
+                            <td>{{ row.Album }}</td>
+                            <td>{{ row.Artist }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="{{ headings|length }}" class="text-center font-medium text-gray-600">
+                                No song recommendations available. Please run the <a href="{{ url_for('detector') }}" class="text-indigo-600 hover:underline">Emotion Detector</a> first.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+</body>
+</html>

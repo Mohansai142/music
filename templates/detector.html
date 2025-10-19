@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Detector</title>
+    <!-- 1. Load Tailwind CSS for utility classes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 2. Load Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- 3. Load Neumorphic CSS (must be named detector.css in static/) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='detector.css') }}">
+    <style>
+        /* Specific state styles for the button, complementing detector.css */
+        .button-inactive {
+            opacity: 0.5;
+            cursor: not-allowed;
+            /* Neumorphic flat state for inactive button */
+            box-shadow: none !important; 
+        }
+    </style>
+</head>
+<body class="min-h-screen flex justify-center items-start p-4 pt-10">
+    
+    <div class="main-card max-w-2xl w-full p-6 md:p-8">
+        
+        <header class="mb-6 border-b pb-3">
+            
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-bold text-gray-800">Live Emotion Detection</h2>
+                <nav class="space-x-3">
+                    <a href="{{ url_for('home') }}" 
+                       class="cta-button text-gray-700 font-semibold px-3 py-1 rounded-lg text-sm inline-block">Home</a>
+                    <!-- FIX: Changed 'recommendations' endpoint to 'menu' endpoint to avoid the BuildError -->
+                    <a href="{{ url_for('menu') }}" 
+                       class="cta-button text-gray-700 font-semibold px-3 py-1 rounded-lg text-sm inline-block">Content Menu</a>
+                </nav>
+            </div>
+        </header>
+
+        <div class="relative mb-6 text-center">
+            <img src="{{ url_for('video_feed') }}" id="video_stream" alt="Live Video Feed">
+            
+            <div id="loading-overlay" class="absolute inset-0 flex items-center justify-center bg-gray-900/80 rounded-lg hidden">
+                <p class="text-white text-xl font-semibold animate-pulse">Processing Emotion...</p>
+            </div>
+        </div>
+
+        <div class="controls mt-6">
+            <button id="stop-button" 
+                    onclick="stopDetection()" 
+                    class="cta-button text-red-700 font-bold py-3 px-8 rounded-lg text-lg">
+                Stop Detection & Get Content
+            </button>
+            <p id="loading-message" class="text-indigo-600 font-semibold mt-4 hidden">
+                Processing emotion and preparing content selection...
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const stopButton = document.getElementById('stop-button');
+        const loadingMessage = document.getElementById('loading-message');
+        const videoStream = document.getElementById('video_stream');
+
+        function stopDetection() {
+            // 1. Disable the button and update text
+            stopButton.disabled = true;
+            stopButton.textContent = 'Stopping...';
+            stopButton.classList.add('button-inactive');
+            
+            // 2. Show loading message
+            loadingMessage.classList.remove('hidden');
+
+            // 3. Clear the video source to stop the stream requests
+            videoStream.src = "";
+
+            // 4. Call the Flask route to stop processing
+            fetch("{{ url_for('stop_detection') }}")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 5. Redirect to the menu page (as handled by the backend)
+                    if (data.redirect_url) {
+                        window.location.href = data.redirect_url;
+                    } else {
+                        console.error("Error: Redirect URL missing from server response.");
+                        displayErrorMessage("Error: Could not redirect to content selection menu.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    displayErrorMessage("Connection error while trying to stop detection.");
+                    
+                    stopButton.disabled = false;
+                    stopButton.textContent = 'Stop Detection & Get Content';
+                    stopButton.classList.remove('button-inactive');
+                    loadingMessage.classList.add('hidden');
+                    
+                    videoStream.src = "{{ url_for('video_feed') }}";
+                });
+        }
+        
+        function displayErrorMessage(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            errorDiv.innerHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-2xl max-w-sm text-center">
+                    <p class="text-xl font-semibold text-red-600 mb-4">Error</p>
+                    <p class="text-gray-700 mb-6">${message}</p>
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded transition">
+                        OK
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(errorDiv);
+        }
+    </script>
+</body>
+</html>

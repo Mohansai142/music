@@ -1,0 +1,63 @@
+/* --- Neumorphism Variables & Base Setup --- */
+:root {
+    --neumorphic-light: #f8f8f8;
+    --neumorphic-dark: #d0d0d0;
+    --outer-shadow: 8px 8px 16px var(--neumorphic-dark), -8px -8px 16px var(--neumorphic-light);
+    --inner-shadow: inset 4px 4px 8px var(--neumorphic-dark), inset -4px -4px 8px var(--neumorphic-light);
+}
+
+/* --- Global Styles (Duplicated for consistency if using separate files) --- */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #e0e0e0; 
+}
+.main-card {
+    background-color: #e0e0e0;
+    border-radius: 1.5rem;
+    box-shadow: var(--outer-shadow);
+}
+.cta-button {
+    transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s, border 0.3s;
+    /* ADDED BORDER: Use a light transparent border to define the edge */
+    border: 1px solid rgba(255, 255, 255, 0.4); 
+    cursor: pointer;
+    box-shadow: var(--outer-shadow);
+    background-color: #e0e0e0;
+}
+.cta-button:hover, .cta-button:active {
+    box-shadow: var(--inner-shadow); 
+    transform: scale(0.98);
+}
+
+/* --- Detector Specific Styles --- */
+/* Updated ID to match your HTML: #video_stream */
+#video_stream { 
+    width: 100%;
+    height: auto;
+    min-height: 300px;
+    border-radius: 0.75rem;
+    object-fit: cover;
+    /* Recessed look */
+    box-shadow: var(--inner-shadow); 
+    border: none;
+}
+
+/* Button State Styles */
+.button-active {
+    opacity: 1;
+}
+.button-inactive {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none !important; /* Flatten inactive button */
+}
+
+/* Navigation Links */
+header a {
+    transition: color 0.2s;
+    font-weight: 600;
+   
+}
+header a:hover {
+    color: #4f46e5;
+}
